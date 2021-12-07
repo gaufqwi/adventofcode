@@ -5,6 +5,7 @@ import argparse
 import logging
 import requests
 import os
+from io import StringIO
 
 parser = argparse.ArgumentParser(description='Run/test Advent of Code solution')
 parser.add_argument('year', metavar='YEAR', type=int)
@@ -48,6 +49,7 @@ else:
                 cachefile = open(f'cache/{cachename}', 'w')
                 cachefile.write(data)
                 cachefile.close()
+            data = StringIO(data)
         except KeyError:
             logging.error('No session id to download data. Try using --data option to specify filename.')
             exit()
