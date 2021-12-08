@@ -14,3 +14,8 @@ def main(data, part, log):
             diff = abs(d - mean)
             cost += diff * (diff + 1) // 2
         print(f'Cost is {cost}')
+        # realmean = sum(data) / len(data)
+        # i = 0
+        # while data[i] < realmean:
+        #     i += 1
+        # print(f'{i} numbers below mean of {realmean}, {len(data) - i} higher')
