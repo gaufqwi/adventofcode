@@ -2,7 +2,7 @@
 
 This is just a repo for my solutions to the [Advent of Code](https://adventofcode.com/2021/about) programming contest. It also contains a small utility to make grabbing the day's test data and feeding it to the day-specific code a little easier. Right now it just for Python; maybe at some point I'll make other languages an option.
 
-```shell
+```
 usage: aoc.py [-h] [--data DATA] [--nocache] [--config CONFIG]
               [--loglevel LOGLEVEL]
               YEAR DAY [PART]
