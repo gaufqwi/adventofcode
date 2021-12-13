@@ -1,8 +1,10 @@
 config.txt
 cache/
-*.class
-*.java
-*.jar
+
+# Java stuff for now
+build-java.sh
+java/
+build/
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
