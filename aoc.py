@@ -59,4 +59,8 @@ else:
 
 logging.info(f'Running code for {args.year} day {args.day} part {args.part}')
 advent = import_module(f'{args.year}.advent{args.day}')
-advent.main(data, args.part, logging)
+try:
+    problem = advent.Problem(data, logging)
+    problem.do_part(args.part)
+except AttributeError:
+    advent.main(data, args.part, logging)

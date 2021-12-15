@@ -1,3 +1,54 @@
+from aocpython.problem import AOCProblem
+from numpy import matrix, zeros
+
+class Problem(AOCProblem):
+    def common(self):
+        self.bigram_to_index = {}
+        for i in range(26):
+            for j in range(26):
+                self.bigram_to_index[chr(ord('A')+i) + chr(ord('A')+j)] = 26*i + j
+        self.initial = self.data.readline().strip()
+        self.initial_dist = matrix(zeros(shape=(26*26, 1)))
+        for i in range(len(self.initial)-1):
+            bndx = self.bigram_to_index[self.initial[i:i+2]]
+            self.initial_dist[bndx,0] += 1
+        self.data.readline()
+        self.transition = matrix(zeros(shape=(26*26, 26*26)))
+        for i in range(26):
+            self.transition[i,i] = 1
+        for line in self.data:
+            pair, insertion = line.strip().split(' -> ')
+            src_ndx = self.bigram_to_index[pair]
+            dest_ndx_a = self.bigram_to_index[pair[0] + insertion]
+            dest_ndx_b = self.bigram_to_index[insertion + pair[1]]
+            self.transition[src_ndx,src_ndx] = 0
+            self.transition[dest_ndx_a,src_ndx] += 1
+            self.transition[dest_ndx_b,src_ndx] += 1
+
+    def get_difference(self, dist):
+        counts = {}
+        for pair, i in self.bigram_to_index.items():
+            count = dist[i,0]
+            counts[pair[0]] = counts.get(pair[0], 0) + count
+            counts[pair[1]] = counts.get(pair[1], 0) + count
+        counts[self.initial[0]] += 1
+        counts[self.initial[-1]] += 1
+        counts = list(counts.values())
+        counts.sort()
+        counts = [int(x) for x in counts if int(x) != 0]
+        return counts[-1] // 2 - counts[0] // 2
+
+    def part1(self):
+        m = self.transition**10 * self.initial_dist
+        d = self.get_difference(m)
+        print(f'The difference is {d}')
+
+    def part2(self):
+        m = self.transition**40 * self.initial_dist
+        d = self.get_difference(m)
+        print(f'The difference is {d}')
+
+## Old implementation
 def main(data, part, log):
     template = data.readline().strip()
     data.readline()
