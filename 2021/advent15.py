@@ -1,6 +1,6 @@
 from aocpython.problem import AOCProblem
 from numpy import array, zeros
-from math import inf
+from heapq import heappop, heappush
 
 neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
@@ -14,26 +14,31 @@ class Problem(AOCProblem):
         self.map = array(source)
 
     def part1(self):
-        distances = {(0,0): 0}
+        frontier = []
+        heappush(frontier, (0,0,0))
+        dest = False
         visited = set()
-        node = (0,0)
-        while not (node[0] == self.size-1 and node[1]==self.size-1):
-            x, y = node
+        while not dest:
+            #frontier.sort()
+            #first = frontier.pop(0)
+            first = heappop(frontier)
             for dx, dy in neighbors:
-                nx = x + dx
-                ny = y + dy
+                nx = first[1] + dx
+                ny = first[2] + dy
                 if nx < 0 or ny < 0 or nx >= self.size or ny >= self.size or (nx,ny) in visited:
                     continue
-                distances[(nx,ny)] = min(distances.get((nx, ny), inf), distances[(x,y)] + self.map[x,y])
-            visited.add(node)
-            del distances[node]
-            candidates = [(d, p) for p, d in distances.items()]
-            node = min(candidates)[1]
-        print(f'Safest path has {distances[node]} risk')
-
+                #frontier.append((first[0] + self.map[ny,nx], nx, ny))
+                if nx == self.size-1 and ny == self.size-1:
+                   print(f'Safest path has {first[0] + self.map[ny,nx]} risk')
+                   return
+                else:
+                    heappush(frontier, (first[0] + self.map[ny,nx], nx, ny))
+                visited.add((nx,ny))
+            dest = self.check_frontier(frontier)
+        print(f'Safest path has {dest[0]} risk')
 
     # Not very efficient; can be improved
-    def opart1(self):
+    def oldpart1(self):
         frontier = [(0, 0, 0)]
         dest = False
         visited = set()
@@ -61,8 +66,6 @@ class Problem(AOCProblem):
         self.map = newmap
         self.size *= 5
         self.part1()
-
-
 
     def check_frontier(self, frontier):
         for f in frontier:
