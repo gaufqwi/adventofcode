@@ -1,5 +1,6 @@
 from aocpython.problem import AOCProblem
 from numpy import array, zeros
+from math import inf
 
 neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
@@ -12,8 +13,27 @@ class Problem(AOCProblem):
         self.size = len(source)
         self.map = array(source)
 
-    # Not very efficient; can be improved
     def part1(self):
+        distances = {(0,0): 0}
+        visited = set()
+        node = (0,0)
+        while not (node[0] == self.size-1 and node[1]==self.size-1):
+            x, y = node
+            for dx, dy in neighbors:
+                nx = x + dx
+                ny = y + dy
+                if nx < 0 or ny < 0 or nx >= self.size or ny >= self.size or (nx,ny) in visited:
+                    continue
+                distances[(nx,ny)] = min(distances.get((nx, ny), inf), distances[(x,y)] + self.map[x,y])
+            visited.add(node)
+            del distances[node]
+            candidates = [(d, p) for p, d in distances.items()]
+            node = min(candidates)[1]
+        print(f'Safest path has {distances[node]} risk')
+
+
+    # Not very efficient; can be improved
+    def opart1(self):
         frontier = [(0, 0, 0)]
         dest = False
         visited = set()
