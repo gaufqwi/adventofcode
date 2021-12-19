@@ -21,14 +21,6 @@ class Scanner:
             for b in self.beacons:
                 orientation.append(axis_transform(i, b))
             self.orientations.append(orientation)
-        # for o in range(24):
-        #     rot, signs = o // 8, o % 8
-        #     orientation = []
-        #     for b in self.beacons:
-        #         orientation.append((b[rot]*(2*int(bool(signs&1))-1),
-        #                             b[(rot+1)%3]*(2*int(bool(signs&2))-1),
-        #                             b[(rot+2)%3]*(2*int(bool(signs&4))-1)))
-        #     self.orientations.append(orientation)
 
     def set_canonical_coords(self, orientation, x, y, z):
         self.beacons = []
@@ -41,9 +33,6 @@ class Scanner:
 
 class Problem(AOCProblem):
     def common(self):
-        # for i in range(24):
-        #     print(axis_transform(i, (5,6,-4)))
-        # return
         blocks = self.data.read().strip().split('\n\n')
         self.scanners = []
         for i, block in enumerate(blocks):
@@ -51,12 +40,13 @@ class Problem(AOCProblem):
             self.scanners.append(Scanner(i, [eval(x) for x in lines[1:]]))
         for s in self.scanners[1:]:
             s.gen_orientations()
-        self.known = set([self.scanners[0]])
+        newly_known = set([self.scanners[0]])
         unknown = set(self.scanners[1:])
         self.log.debug(f'Initialized at {self.elapsed()}')
         while len(unknown) > 0:
             #self.log.debug(f'{len(unknown)} at {self.elapsed()}')
-            known = self.known.copy()
+            known = newly_known
+            newly_known = set()
             for known_scanner in known:
                 for unknown_scanner in unknown:
                     self.log.debug(f'Comparing known {known_scanner.number} to {unknown_scanner.number} at {self.elapsed()}')
@@ -72,13 +62,13 @@ class Problem(AOCProblem):
                             self.log.debug(f'Found match {known_scanner.number}={unknown_scanner.number} at {self.elapsed()}')
                             offset = sorted_count[-1][1]
                             unknown_scanner.set_canonical_coords(o, offset[0], offset[1], offset[2])
-                            self.known.add(unknown_scanner)
+                            newly_known.add(unknown_scanner)
                             break
-                unknown = unknown - self.known
+                unknown = unknown - newly_known
 
     def part1(self):
         beacons = set()
-        for scanner in self.known:
+        for scanner in self.scanners:
             for beacon in scanner.beacons:
                 beacons.add(beacon)
         print(f'There are {len(beacons)} beacons')
