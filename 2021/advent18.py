@@ -9,7 +9,7 @@ class Problem(AOCProblem):
         temp = []
         for line in self.data:
             temp.append(line.strip().replace(' ', ''))
-        self.data = temp
+        self.temp = temp
 
     def reduce(self, sfsum):
         needs_reducing = True
