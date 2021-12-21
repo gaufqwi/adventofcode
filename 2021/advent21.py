@@ -37,23 +37,25 @@ class Problem(AOCProblem):
         # (p1 pos, p1 score, p2 pos, p2 score, whose turn)
         unfinished_universes = {(self.positions[0], 0, self.positions[1], 0, 0): 1}
         while len(unfinished_universes) > 0:
-            uu, ucount = unfinished_universes.popitem()
-            turn = uu[4]
-            otherturn = (turn + 1) % 2
-            pos_i = 2*turn
-            score_i = pos_i + 1
-            pos = uu[pos_i]
-            score = uu[score_i]
-            for roll, rollcount in dirac_sum_counts:
-                nextu = list(uu)
-                nextu[pos_i] = (pos - 1 + roll) % 10 + 1
-                nextu[score_i] = score + nextu[pos_i]
-                nextu[4] = otherturn
-                nextu = tuple(nextu)
-                if nextu[score_i] >= winscore:
-                    finished_universes[nextu] = finished_universes.get(nextu, 0) + ucount * rollcount
-                else:
-                    unfinished_universes[nextu] = unfinished_universes.get(nextu, 0) + ucount * rollcount
+            new_unfinished_universes = {} #unfinished_universes.copy()
+            for uu, ucount in unfinished_universes.items():
+                turn = uu[4]
+                otherturn = (turn + 1) % 2
+                pos_i = 2*turn
+                score_i = pos_i + 1
+                pos = uu[pos_i]
+                score = uu[score_i]
+                for roll, rollcount in dirac_sum_counts:
+                    nextu = list(uu)
+                    nextu[pos_i] = (pos - 1 + roll) % 10 + 1
+                    nextu[score_i] = score + nextu[pos_i]
+                    nextu[4] = otherturn
+                    nextu = tuple(nextu)
+                    if nextu[score_i] >= winscore:
+                        finished_universes[nextu] = finished_universes.get(nextu, 0) + ucount * rollcount
+                    else:
+                        new_unfinished_universes[nextu] = new_unfinished_universes.get(nextu, 0) + ucount * rollcount
+            unfinished_universes = new_unfinished_universes
         p1_wins, p2_wins = 0, 0
         for u, count in finished_universes.items():
             if u[1] >= winscore:
@@ -62,6 +64,6 @@ class Problem(AOCProblem):
                 p2_wins += count
             else:
                 raise "Uh oh. Unfinished universe in the finished pile"
-        print(f'Best Dirac Dice player wins {max(p1_wins, p2_wins)} times')
+        print(f'Best Dirac Dice player wins (score >={winscore}) {max(p1_wins, p2_wins)} times')
 
 
