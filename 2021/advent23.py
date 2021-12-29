@@ -76,7 +76,6 @@ class Problem(AOCProblem):
                 self.initial_positions[j].append(line[2*j+3])
 
     def dfsearch(self, state, best=WorstState(), cache={}, depth=0):
-        #self.log.debug(f'DFsearch depth {depth}')
         self.log.debug(f'DFsearch cost {depth} - {state.cost}')
         fp = state.fp()
         if fp in cache:
@@ -84,13 +83,10 @@ class Problem(AOCProblem):
         for amp in self.amps:
             # Always try to go home
             home = state.can_go_home(amp)
-            #print(amp, '->', home, '|', state.locations)
             if home:
                 try:
                     newstate = state.move(self.paths, amp, home)
                     if newstate.everybody_home():
-                        # if newstate.cost == 18195:
-                        #print('Win', newstate.cost, newstate.locations)
                         if newstate.cost < best.cost:
                             best = newstate
                     else:
@@ -197,11 +193,9 @@ class Problem(AOCProblem):
         self.make_graph(room_depth=4)
         self.make_paths()
         names = {'A': 0, 'B': 0, 'C': 0, 'D': 0}
-        #print(self.initial_positions)
         splices = [['D', 'D'], ['C', 'B'], ['B', 'A'], ['A', 'C']]
         for i in range(4):
             self.initial_positions[i][1:-1] = splices[i]
-        #print(self.initial_positions)
         locations = {}
         for i in range(self.room_depth):
             for j, room in enumerate(['RA', 'RB', 'RC', 'RD']):
